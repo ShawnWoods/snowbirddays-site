@@ -236,21 +236,25 @@
             fields described above.
           </li>
           <li>
-            Run the offline verifier. SnowbirdDays ships a standalone Swift
-            script at <code>scripts/verify-audit-evidence.swift</code> in the
-            public repository. It is deliberately written as a separate
-            implementation from the app, with no SnowbirdDays imports, so a
-            regression on either side fails closed: the app and the
-            third-party verifier must independently agree on what a valid
-            artifact looks like.
+            Run the offline verifier. SnowbirdDays publishes a standalone
+            Swift script —
+            <a href="verify-audit-evidence.swift">verify-audit-evidence.swift</a>
+            — that is deliberately written as a separate implementation from
+            the app, with no SnowbirdDays imports, so a regression on either
+            side fails closed: the app and the third-party verifier must
+            independently agree on what a valid artifact looks like.
             <br />
-            Usage:
+            Download and run:
             <br />
-            <code>swift scripts/verify-audit-evidence.swift &lt;path-to-artifact.json&gt;</code>
+            <code>curl -O https://snowbirddays.app/verify-audit-evidence.swift</code>
+            <br />
+            <code>swift verify-audit-evidence.swift &lt;path-to-artifact.json&gt;</code>
             <br />
             The script exits with status 0 on a valid artifact and a non-zero
             status with a single sanitized message on stderr otherwise. It is
-            fully offline; it makes no network calls.
+            fully offline; it makes no network calls. Source: the file is
+            served as plain text from the same domain as this page so an
+            auditor can read every line before running it.
           </li>
           <li>
             Inspect anchor receipts. Each receipt contains the binary RFC 3161
