@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Audit Evidence — SnowbirdDays</title>
+    <meta
+      name="description"
+      content="What the SnowbirdDays Audit Evidence JSON artifact is, what it does and does not prove, and how a tax preparer or auditor can verify it offline."
+    />
+    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1C1814" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Audit Evidence — SnowbirdDays" />
+    <meta property="og:description" content="What the SnowbirdDays Audit Evidence JSON artifact is, what it does and does not prove, and how a tax preparer or auditor can verify it offline." />
+    <meta property="og:type" content="article" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="SnowbirdDays home">Snowbird<em>Days</em></a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="audit-evidence.html" aria-current="page">Audit&nbsp;Evidence</a>
+          <a href="support.html">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <article class="shell-prose">
+        <a class="page-back" href="/" aria-label="Back to home">&larr; Back to home</a>
+
+        <h1>Audit Evidence</h1>
+
+        <p class="meta">
+          <strong>Effective date:</strong> 2026-05-02 &middot;
+          <strong>Last updated:</strong> 2026-05-02
+        </p>
+
+        <div class="callout">
+          <p>
+            <strong>This is not tax or legal advice.</strong> The Audit Evidence
+            artifact is a cryptographic record-keeping aid. It does not, by
+            itself, prove residency, audit readiness, or any specific tax
+            outcome. Always consult a qualified CPA, tax attorney, or audit
+            professional before relying on the file for any tax or legal
+            purpose.
+          </p>
+        </div>
+
+        <nav class="toc" aria-label="On this page">
+          <p class="toc-title">On this page</p>
+          <ol>
+            <li><a href="#summary">Summary</a></li>
+            <li><a href="#contents">What the artifact contains</a></li>
+            <li><a href="#proves">What the chain proves</a></li>
+            <li><a href="#not-proves">What it does not prove</a></li>
+            <li><a href="#verify">How to verify the artifact</a></li>
+            <li><a href="#preparers">If you are a tax preparer or auditor</a></li>
+            <li><a href="#limitations">Limitations and caveats</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="summary">Summary</h2>
+        <ul>
+          <li>
+            The Audit Evidence file is a single <code>.json</code> document the
+            app exports on demand. It is intended for the user to share with a
+            tax preparer, auditor, or representative who wants to verify that
+            the app's records have not been edited after the fact.
+          </li>
+          <li>
+            What it proves: that the included day-by-day records form a
+            <em>tamper-evident</em> chain, and that the chain tail was sealed
+            at a specific point in time by an independent timestamp authority.
+          </li>
+          <li>
+            What it does <em>not</em> prove: that the user was actually present
+            in the recorded jurisdiction, that the file is admissible as legal
+            evidence, that no records exist outside the chain, or that the
+            file is sufficient for a tax audit.
+          </li>
+          <li>
+            Verification is offline. The verifier reads only the file the user
+            shares; it makes no network calls and contacts no server operated
+            by SnowbirdDays.
+          </li>
+        </ul>
+
+        <h2 id="contents">What the artifact contains</h2>
+        <p>
+          Open the file in any JSON viewer to inspect it. The top-level shape
+          is fixed and self-describing:
+        </p>
+        <ul>
+          <li>
+            <code>artifactType</code> — must equal
+            <code>snowbirddays.auditEvidence</code>. A verifier rejects any
+            other value.
+          </li>
+          <li>
+            <code>formatVersion</code> — integer that describes the artifact
+            shape. Increments only when the shape changes in a way that breaks
+            an existing offline verifier.
+          </li>
+          <li>
+            <code>generatedAt</code> — ISO 8601 timestamp at which the user
+            asked the app to produce the file.
+          </li>
+          <li>
+            <code>disclaimer</code> and <code>limitations</code> — human-readable
+            scope claims carried inside the file so a downstream reader sees the
+            same posture the app surfaces.
+          </li>
+          <li>
+            <code>metadata</code> — counts of each section (daily attestations,
+            ledger break events, anchor receipts, event chain proofs) plus a
+            <code>schemaVersion</code> integer.
+          </li>
+          <li>
+            <code>dailyAttestations</code> — one entry per day on the device's
+            attestation chain. Each entry carries the date key, the jurisdiction
+            (a U.S. state code such as <code>FL</code>, or a country code such
+            as <code>CA</code>), the canonical-payload bytes used to compute
+            the day's hash, the SHA-256 hash, the previous day's hash, and any
+            anchor-receipt linkage.
+          </li>
+          <li>
+            <code>anchorReceipts</code> — RFC 3161 timestamp receipts returned
+            by the public timestamp authority (FreeTSA). Each receipt names the
+            range of attestation sequence numbers it covers, the message
+            imprint that was submitted, and the binary token the authority
+            signed (base64-encoded).
+          </li>
+          <li>
+            <code>eventChainProof</code> — a privacy-limited proof that
+            per-event ingest hashes form a continuous chain. Carries only
+            sequence numbers and hashes, never raw event content.
+          </li>
+          <li>
+            <code>ledgerBreakEvents</code> — a parallel audit trail of any
+            chain-continuity breaks the app detected. By design these are
+            <em>outside</em> the chain, so a break event in this list does not
+            fail the chain proof — it is a separately recorded incident report.
+          </li>
+        </ul>
+
+        <h2 id="proves">What the cryptographic chain proves</h2>
+        <p>
+          Each daily attestation row carries a 32-byte SHA-256 hash of its
+          canonical payload. Each row also carries the previous row's hash as
+          its <em>previous-pointer</em>. Together they form a hash chain: to
+          modify any past day's record, an attacker would have to recompute
+          every subsequent hash so the chain still links.
+        </p>
+        <p>
+          Recomputing hashes is computationally cheap. The protection comes
+          from the second layer: periodically, the app submits the current
+          chain tail's hash to a public RFC 3161 Time-Stamping Authority
+          (FreeTSA), which returns a signed token attesting that this exact
+          hash existed at this exact time. The token is signed by FreeTSA's
+          certificate, which is published; we do not control or operate it.
+        </p>
+        <p>
+          Together, the chain plus the anchor receipts give a verifier two
+          independent claims:
+        </p>
+        <ul>
+          <li>
+            The records included in the file form a single internally
+            consistent sequence; no row was inserted, deleted, or modified
+            after sealing without breaking the chain.
+          </li>
+          <li>
+            The chain tail at the time of an anchor existed at the timestamp
+            the authority recorded. Producing a tampered file that an auditor
+            would accept therefore requires forging a signed timestamp under
+            FreeTSA's published certificate, which is not computationally
+            equivalent to recomputing local hashes.
+          </li>
+        </ul>
+
+        <h2 id="not-proves">What the cryptographic chain does <em>not</em> prove</h2>
+        <ul>
+          <li>
+            <strong>It does not prove the user was actually present in the
+            recorded jurisdiction.</strong> The artifact records what the
+            device's location services reported at the time the row was
+            sealed; it does not, by itself, prove that the device was held
+            by the user, in the recorded place, in the recorded time zone.
+          </li>
+          <li>
+            <strong>It does not prove that no records exist outside the
+            chain.</strong> If the user was not running the app continuously
+            (for example, the device was off, the app was not yet installed,
+            location permission was disabled, or background updates were
+            paused), gaps will appear. Gaps are not tampering, but they are
+            not evidence of absence either.
+          </li>
+          <li>
+            <strong>It does not establish admissibility as legal
+            evidence.</strong> Whether an artifact is admissible in a
+            particular tax proceeding, court, or jurisdiction is a question
+            for counsel, not a question that cryptography can answer.
+          </li>
+          <li>
+            <strong>It does not certify that the device was uncompromised.</strong>
+            Anchor receipts attest only to the existence of a hash at a given
+            time, not to the integrity of the producing device.
+          </li>
+          <li>
+            <strong>It does not replace a CPA or tax attorney.</strong>
+            Residency determinations depend on facts well beyond day counts:
+            domicile, intent, source of income, family ties, jurisdiction-specific
+            rules. The artifact is a record, not a determination.
+          </li>
+        </ul>
+
+        <h2 id="verify">How to verify the artifact</h2>
+        <ol>
+          <li>
+            The user shares the Audit Evidence <code>.json</code> file with
+            you. The file has an obvious header — open it in any text or JSON
+            viewer and confirm that <code>artifactType</code> equals
+            <code>snowbirddays.auditEvidence</code>.
+          </li>
+          <li>
+            Confirm overall structural integrity. A standard JSON validator is
+            enough for this step. The file should be well-formed JSON with the
+            fields described above.
+          </li>
+          <li>
+            Run the offline verifier. SnowbirdDays ships a standalone Swift
+            script at <code>scripts/verify-audit-evidence.swift</code> in the
+            public repository. It is deliberately written as a separate
+            implementation from the app, with no SnowbirdDays imports, so a
+            regression on either side fails closed: the app and the
+            third-party verifier must independently agree on what a valid
+            artifact looks like.
+            <br />
+            Usage:
+            <br />
+            <code>swift scripts/verify-audit-evidence.swift &lt;path-to-artifact.json&gt;</code>
+            <br />
+            The script exits with status 0 on a valid artifact and a non-zero
+            status with a single sanitized message on stderr otherwise. It is
+            fully offline; it makes no network calls.
+          </li>
+          <li>
+            Inspect anchor receipts. Each receipt contains the binary RFC 3161
+            token signed by the timestamp authority, base64-encoded under
+            <code>tokenDataBase64</code>. Verifying the token against
+            FreeTSA's published certificate (<a href="https://freetsa.org/">freetsa.org</a>)
+            confirms that the message imprint existed at the recorded TSA time.
+            Any standard RFC 3161 verification tool (for example, OpenSSL's
+            <code>ts -verify</code> command) will accept this token format.
+          </li>
+          <li>
+            If you want a deeper walkthrough or a guided verification, contact
+            us at
+            <a href="mailto:audit@snowbirddays.app">audit@snowbirddays.app</a>.
+            We do not see, read, or store user data by virtue of an audit
+            inquiry; the file you receive is the same file the user holds.
+          </li>
+        </ol>
+
+        <h2 id="preparers">If you are a tax preparer or auditor reviewing this artifact</h2>
+        <ul>
+          <li>
+            The artifact is not a substitute for the underlying residency
+            analysis. It is evidence of consistent record-keeping by the
+            user's device, not a determination of where the user was.
+          </li>
+          <li>
+            The day counts derived from the artifact can be cross-referenced
+            against credit-card statements, flight records, hotel folios,
+            E-ZPass logs, and other corroborating documents. A consistent
+            day-by-day record alongside corroborating financial records is
+            generally more useful than either alone.
+          </li>
+          <li>
+            If the user has continuously run SnowbirdDays during the tax year,
+            and the chain verifies cleanly, the records are unlikely to have
+            been edited after the fact — that is what the chain is designed
+            to detect.
+          </li>
+          <li>
+            If the chain head was sealed by FreeTSA at a date <em>before</em>
+            an audit was initiated, that timestamp corroborates the records
+            as contemporaneous, rather than retrospectively constructed for
+            the audit. The signed token is the relevant artifact for that
+            claim.
+          </li>
+          <li>
+            Gaps in the chain are not evidence of tampering. They typically
+            indicate periods when the device was off, the app was not yet
+            installed, or background location was disabled. Ask the user
+            before treating a gap as anomalous.
+          </li>
+        </ul>
+
+        <h2 id="limitations">Limitations and caveats</h2>
+        <ul>
+          <li>
+            SnowbirdDays makes no warranty as to the legal admissibility or
+            sufficiency of these records in any particular jurisdiction or
+            proceeding.
+          </li>
+          <li>
+            FreeTSA is a free, community-operated public timestamping
+            service. SnowbirdDays does not control, operate, or guarantee
+            its availability. If a future anchor cannot be obtained, the
+            record for that period will not carry an anchor receipt, even
+            though the local hash chain remains intact.
+          </li>
+          <li>
+            A clean cryptographic verification is necessary but not
+            sufficient. It tells you that the file has not been edited; it
+            does not tell you the underlying observations were correct.
+          </li>
+          <li>
+            The artifact reflects what the device's location services
+            reported. Background location on iOS uses visit-detection and
+            significant-change updates; both are heuristics that can miss
+            short visits, briefly mis-classify a transit point, or fail to
+            fire while the device is off or in airplane mode.
+          </li>
+          <li>
+            Nothing in this page is tax or legal advice. Always consult a
+            qualified CPA, tax attorney, or audit professional before
+            relying on the artifact for any tax or legal purpose.
+          </li>
+        </ul>
+
+        <h2 id="privacy">Privacy</h2>
+        <p>
+          The artifact is designed to expose only what is needed for offline
+          chain verification. Specifically:
+        </p>
+        <p>
+          <strong>The artifact contains:</strong>
+        </p>
+        <ul>
+          <li>
+            Date keys for each daily attestation (for example,
+            <code>2025-06-15</code>).
+          </li>
+          <li>
+            Jurisdiction codes (a U.S. state code such as <code>FL</code>, or
+            an ISO country code such as <code>CA</code>).
+          </li>
+          <li>
+            Per-attestation timestamps (the canonical payload includes the
+            attestation time, first and last ping times for the day, and the
+            time zone identifier the device was using).
+          </li>
+          <li>
+            Sequence numbers, SHA-256 hashes, and previous-pointer hashes
+            that form the chain.
+          </li>
+          <li>
+            RFC 3161 anchor receipts: covered sequence ranges, base64-encoded
+            signed timestamp tokens, the TSA's recorded time, and the TSA
+            provider URL.
+          </li>
+          <li>
+            Per-event proof rows: sequence numbers and hashes only. Raw event
+            content (coordinates, raw timestamps, tz identifiers, sources) is
+            not included in the event-chain proof.
+          </li>
+        </ul>
+        <p>
+          <strong>The artifact does not contain:</strong>
+        </p>
+        <ul>
+          <li>Latitude, longitude, or any raw GPS coordinate.</li>
+          <li>Raw location pings, in any form.</li>
+          <li>The user's name, email, Apple ID, or device identifier.</li>
+          <li>Any analytics, advertising, or third-party identifiers.</li>
+        </ul>
+        <p>
+          See the <a href="privacy.html">Privacy Policy</a> for the full
+          description of what SnowbirdDays does and does not collect.
+        </p>
+
+        <h2 id="contact">Contact</h2>
+        <p>
+          Questions about the artifact, verification, or how to read a
+          specific section:
+          <a href="mailto:audit@snowbirddays.app">audit@snowbirddays.app</a>.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div>
+          <p class="site-footer-brand">Snowbird<em>Days</em></p>
+          <p>&copy; 2026 SnowbirdDays.</p>
+          <p class="site-footer-disclaimer">Not tax or legal advice. Always consult a qualified CPA, tax attorney, or audit professional.</p>
+        </div>
+        <nav aria-label="Footer">
+          <a href="/">Home</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="support.html">Support</a>
+          <a href="mailto:audit@snowbirddays.app">audit@snowbirddays.app</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

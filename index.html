@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SnowbirdDays — Residency day tracking, on your device</title>
+    <meta
+      name="description"
+      content="A native iOS app that counts your days in each US state and foreign country for tax-residency purposes. On-device storage, cryptographic consistency receipts, no analytics."
+    />
+    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1C1814" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="SnowbirdDays — Residency day tracking, on your device" />
+    <meta property="og:description" content="A native iOS app that counts your days in each US state and foreign country for tax-residency purposes. On-device storage, cryptographic consistency receipts, no analytics." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://snowbirddays.app/" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="SnowbirdDays home">Snowbird<em>Days</em></a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="audit-evidence.html">Audit&nbsp;Evidence</a>
+          <a href="support.html">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-h">
+        <p class="hero-eyebrow">For snowbirds, nomads &amp; multi-state residents</p>
+        <h1 id="hero-h">Count the days that count, <em>privately</em>.</h1>
+        <p class="hero-lead">
+          A native iOS app that records the days you spend in each US state
+          and foreign country, on the phone you already carry. Your location
+          history never leaves the device. Each day is hash-chained into a
+          cryptographic record you, your CPA, or an auditor can verify offline.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="privacy.html">
+            Read the Privacy Policy <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="btn btn-ghost" href="audit-evidence.html">
+            Audit Evidence
+          </a>
+        </div>
+        <p class="hero-meta">
+          iPhone &amp; iPad &middot; iOS 18+ &middot; 30-day free trial &middot;
+          $3.99 / month or $29.99 / year
+        </p>
+      </section>
+
+      <section class="privacy-promise" aria-labelledby="promise-h">
+        <div class="privacy-card">
+          <div class="privacy-mark" aria-hidden="true">&#10052;</div>
+          <div>
+            <h2 id="promise-h">Your data. <em>On your device.</em></h2>
+            <p>
+              Exports and backups never leave this device unless you share them.
+              Nothing is transmitted automatically. No analytics, no crash
+              reporter, no ad tracking. The only outbound request is a hash-only
+              submission to a public RFC&nbsp;3161 timestamp authority &mdash;
+              never your location, never anything that identifies you.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-features" aria-labelledby="features-h">
+        <header class="section-head">
+          <div>
+            <p class="section-eyebrow">What it does</p>
+            <h2 id="features-h">A small product that does <em>one thing well</em>.</h2>
+          </div>
+        </header>
+
+        <div class="bento">
+          <article class="bento-card">
+            <span class="bento-mark">01</span>
+            <h3>Counts your days, jurisdiction by jurisdiction</h3>
+            <p>
+              Uses iOS background location (visit detection and significant
+              location changes) to assemble a day-by-day record of the US
+              states and foreign countries you spent time in &mdash; no manual
+              logging required.
+            </p>
+            <p class="bento-card-detail">CLVisit + significant change &middot; on-device only</p>
+          </article>
+
+          <article class="bento-card">
+            <span class="bento-mark">02</span>
+            <h3>Warns you before a threshold</h3>
+            <p>
+              Set a threshold (for example, the 183-day common-law test in
+              many US states) and receive a local notification before you
+              cross it.
+            </p>
+            <p class="bento-card-detail">Local alerts &middot; never push from a server</p>
+          </article>
+
+          <article class="bento-card">
+            <span class="bento-mark">03</span>
+            <h3>Tamper-evident records</h3>
+            <p>
+              Each day&rsquo;s record is SHA-256 hashed into a chain and
+              periodically anchored to a public RFC&nbsp;3161 timestamp
+              authority (FreeTSA), so a later edit is detectable.
+            </p>
+            <p class="bento-card-detail">SHA-256 chain &middot; FreeTSA RFC 3161</p>
+          </article>
+
+          <article class="bento-card">
+            <span class="bento-mark">04</span>
+            <h3>Open exports, no vendor lock-in</h3>
+            <p>
+              Your records export as plain CSV, JSON, and PDF so your CPA or
+              tax attorney can read them without any tool from us. The
+              30-day trial lets you try the workflow before subscribing.
+            </p>
+            <p class="bento-card-detail">CSV &middot; JSON &middot; PDF &middot; cancel anytime in iOS Settings</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="split-cta" aria-labelledby="auditors-h">
+        <div>
+          <p class="section-eyebrow">For tax preparers &amp; auditors</p>
+          <h2 id="auditors-h">A file your client can hand you, <em>that you can verify offline</em>.</h2>
+          <p>
+            SnowbirdDays exports an Audit Evidence JSON artifact: a single
+            self-describing document containing daily attestations, anchor
+            receipts, and a chain proof. A standalone Swift verifier in the
+            public repo confirms the chain without contacting any server.
+          </p>
+          <p>
+            <a href="audit-evidence.html">Read the verification guide
+            <span aria-hidden="true">&rarr;</span></a>
+          </p>
+        </div>
+        <aside class="split-cta-aside">
+          <h3>What it is &mdash; and isn&rsquo;t</h3>
+          <ul>
+            <li>A tamper-evident record of consistent device-side observations.</li>
+            <li>Not a determination of legal residency.</li>
+            <li>Not admissibility advice for any specific proceeding.</li>
+            <li>Not a substitute for a CPA or tax attorney.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="split-cta" aria-labelledby="faq-h" style="margin-bottom: var(--s-section);">
+        <div>
+          <p class="section-eyebrow">Common questions</p>
+          <h2 id="faq-h">Honest answers, in <em>plain language</em>.</h2>
+          <p>
+            Does the app send my location anywhere? How do I delete my data?
+            What happens if my subscription lapses? The support page answers
+            these directly &mdash; no autoresponder.
+          </p>
+          <p>
+            <a href="support.html">Browse support
+            <span aria-hidden="true">&rarr;</span></a>
+            &nbsp;or email
+            <a href="mailto:support@snowbirddays.app">support@snowbirddays.app</a>.
+          </p>
+        </div>
+        <aside class="split-cta-aside">
+          <h3>Not tax or legal advice</h3>
+          <p style="font-size: var(--t-small); color: var(--color-ink-soft); margin: 0;">
+            SnowbirdDays produces records, not legal determinations. Day
+            counts are observations of where the device was &mdash; not a
+            conclusion about where you legally resided. Always consult a
+            qualified CPA, tax attorney, or audit professional before
+            relying on the app&rsquo;s output for any tax or legal purpose.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div>
+          <p class="site-footer-brand">Snowbird<em>Days</em></p>
+          <p>&copy; 2026 SnowbirdDays.</p>
+          <p class="site-footer-disclaimer">Not tax or legal advice. Always consult a qualified CPA, tax attorney, or audit professional.</p>
+        </div>
+        <nav aria-label="Footer">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="support.html">Support</a>
+          <a href="audit-evidence.html">Audit Evidence</a>
+          <a href="mailto:support@snowbirddays.app">support@snowbirddays.app</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support — SnowbirdDays</title>
+    <meta
+      name="description"
+      content="Support, contact information, and frequently asked questions for the SnowbirdDays iOS app."
+    />
+    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1C1814" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Support — SnowbirdDays" />
+    <meta property="og:description" content="Support, contact information, and frequently asked questions for the SnowbirdDays iOS app." />
+    <meta property="og:type" content="article" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="SnowbirdDays home">Snowbird<em>Days</em></a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="audit-evidence.html">Audit&nbsp;Evidence</a>
+          <a href="support.html" aria-current="page">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <article class="shell-prose">
+        <a class="page-back" href="/" aria-label="Back to home">&larr; Back to home</a>
+
+        <h1>Support</h1>
+        <p class="meta">
+          Quick answers and a way to reach us. SnowbirdDays is a small,
+          focused product, so support is a real human inbox &mdash; not a
+          help-desk autoresponder.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Email
+          <a href="mailto:support@snowbirddays.app">support@snowbirddays.app</a>.
+          Please include your iOS version, the app version (Settings → About),
+          and a description of what you were trying to do.
+        </p>
+        <p>
+          For privacy or data-deletion questions:
+          <a href="mailto:privacy@snowbirddays.app">privacy@snowbirddays.app</a>.
+        </p>
+        <p>
+          For legal or terms questions:
+          <a href="mailto:legal@snowbirddays.app">legal@snowbirddays.app</a>.
+        </p>
+
+        <h2>Common questions</h2>
+
+        <h3>Does SnowbirdDays send my location anywhere?</h3>
+        <p>
+          No. Your location history stays on this device. The only outbound
+          request the app makes on its own is a periodic hash submission to a
+          public RFC 3161 timestamp authority (FreeTSA). The submission contains
+          a 32-byte SHA-256 hash and an 8-byte nonce. It contains no location,
+          no name, no email, and nothing that identifies you. See the
+          <a href="privacy.html">Privacy Policy</a> for the full disclosure.
+        </p>
+
+        <h3>How do I delete my data?</h3>
+        <p>
+          Open the app, go to <em>Settings → Delete All Data</em>, and confirm.
+          That wipes every record, setting, exported file, and cached file the
+          app created. Uninstalling the app from your home screen also removes
+          everything except your App Store subscription, which is managed by
+          Apple in
+          <em>Settings → [your name] → Subscriptions</em>.
+        </p>
+
+        <h3>Is SnowbirdDays a substitute for a CPA?</h3>
+        <p>
+          No. SnowbirdDays produces records, not legal determinations. Day
+          counts are observations of where the device was &mdash; not a conclusion
+          about where you legally resided. Residency decisions depend on facts
+          well beyond day counts (domicile, intent, source of income, family
+          ties, jurisdiction-specific rules). Always consult a qualified CPA,
+          tax attorney, or audit professional before relying on the app's
+          output for any tax or legal purpose.
+        </p>
+
+        <h3>What happens if my subscription lapses?</h3>
+        <p>
+          Your existing data stays on your device, and you can still read your
+          history, import data, and export it. New automatic recording, new
+          manual entries, and threshold alerts pause until you resubscribe.
+          There is a short grace banner in the app so a missed renewal does not
+          immediately disrupt the flow.
+        </p>
+
+        <h3>How do I cancel my subscription?</h3>
+        <p>
+          Subscriptions are managed by Apple. Open
+          <em>Settings → [your name] → Subscriptions</em> on iOS, choose
+          SnowbirdDays, and tap Cancel Subscription. We do not process payments
+          or handle cancellations directly.
+        </p>
+
+        <h3>What devices and iOS versions are supported?</h3>
+        <p>
+          SnowbirdDays runs on iPhone and iPad on iOS 18 and later. We do not
+          support iOS 17 or earlier in the current release.
+        </p>
+
+        <h3>How do I verify the Audit Evidence file?</h3>
+        <p>
+          SnowbirdDays exports an Audit Evidence JSON artifact that a tax
+          preparer or auditor can verify offline. The
+          <a href="audit-evidence.html">Audit Evidence page</a> describes the
+          file's contents, what its cryptographic chain proves and does not
+          prove, and how to run the standalone offline verifier shipped at
+          <code>scripts/verify-audit-evidence.swift</code> in the public
+          repository. For a guided walkthrough, email
+          <a href="mailto:audit@snowbirddays.app">audit@snowbirddays.app</a>.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div>
+          <p class="site-footer-brand">Snowbird<em>Days</em></p>
+          <p>&copy; 2026 SnowbirdDays.</p>
+          <p class="site-footer-disclaimer">Not tax or legal advice. Always consult a qualified CPA, tax attorney, or audit professional.</p>
+        </div>
+        <nav aria-label="Footer">
+          <a href="/">Home</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="audit-evidence.html">Audit Evidence</a>
+          <a href="mailto:support@snowbirddays.app">support@snowbirddays.app</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

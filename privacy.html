@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy Policy — SnowbirdDays</title>
+    <meta
+      name="description"
+      content="SnowbirdDays Privacy Policy: what we collect (nothing beyond what you enter), what we don't collect, where data lives, and the narrow disclosed outbound traffic."
+    />
+    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1C1814" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Privacy Policy — SnowbirdDays" />
+    <meta property="og:description" content="SnowbirdDays Privacy Policy: what we collect (nothing beyond what you enter), what we don't collect, where data lives, and the narrow disclosed outbound traffic." />
+    <meta property="og:type" content="article" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/" aria-label="SnowbirdDays home">Snowbird<em>Days</em></a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="privacy.html" aria-current="page">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="audit-evidence.html">Audit&nbsp;Evidence</a>
+          <a href="support.html">Support</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <article class="shell-prose">
+        <a class="page-back" href="/" aria-label="Back to home">&larr; Back to home</a>
+
+        <h1>Privacy Policy</h1>
+
+        <p class="meta">
+          <strong>Effective date:</strong> 2026-05-02 &middot;
+          <strong>Last updated:</strong> 2026-05-02
+        </p>
+
+        <div class="callout">
+          <p>
+            <strong>This is not tax or legal advice.</strong> SnowbirdDays
+            records observations of where your device was. It does not
+            determine your legal residency. Always consult a qualified CPA,
+            tax attorney, or audit professional before relying on the app's
+            output for any tax or legal purpose.
+          </p>
+        </div>
+
+        <nav class="toc" aria-label="On this page">
+          <p class="toc-title">On this page</p>
+          <ol>
+            <li><a href="#summary">Summary</a></li>
+            <li><a href="#collect">What we collect</a></li>
+            <li><a href="#dont-collect">What we don&rsquo;t collect</a></li>
+            <li><a href="#where">Where your data lives</a></li>
+            <li><a href="#outbound">Outbound traffic</a></li>
+            <li><a href="#storekit">StoreKit and subscriptions</a></li>
+            <li><a href="#access">Subject access and deletion</a></li>
+            <li><a href="#children">Children</a></li>
+            <li><a href="#changes">Changes to this policy</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#governing-law">Governing law</a></li>
+          </ol>
+        </nav>
+
+        <h2 id="summary">Summary</h2>
+        <ul>
+          <li>
+            <strong>Your data stays on your device.</strong> SnowbirdDays
+            stores your location records, settings, and exported files only on
+            this iPhone or iPad.
+          </li>
+          <li>
+            <strong>No analytics, no crash reporter, no ad tracking, no
+            third-party SDKs that observe you.</strong> We do not run a backend
+            that receives your data.
+          </li>
+          <li>
+            <strong>The only outbound traffic the app initiates on its own is
+            a hash submission to a public timestamp authority (FreeTSA).</strong>
+            That submission contains a 32-byte SHA-256 hash and an 8-byte
+            nonce. It contains no location, no name, no email, and nothing
+            that identifies you.
+          </li>
+        </ul>
+
+        <h2 id="collect">What we collect</h2>
+        <p>
+          We collect nothing beyond what you enter into the app. Specifically,
+          the app stores on your device:
+        </p>
+        <ul>
+          <li>
+            Background location events from iOS (visits and significant
+            location changes), used to count which state or country you were
+            in on each day.
+          </li>
+          <li>
+            Manual entries you create or import (for example, a CSV of past
+            travel days). Manually imported records are tagged so they are
+            distinguishable from device-derived records.
+          </li>
+          <li>
+            App preferences such as your primary state, threshold alert
+            settings, and appearance choices.
+          </li>
+        </ul>
+        <p>
+          We do not have a server that receives any of this data. We do not
+          have an account system, so there is no name, email, password, or
+          billing record on our side.
+        </p>
+
+        <h2 id="dont-collect">What we don't collect</h2>
+        <ul>
+          <li>No analytics or product-usage telemetry of any kind.</li>
+          <li>No crash reporting service operated by us.</li>
+          <li>No advertising identifiers and no ad-network SDKs.</li>
+          <li>No third-party tracking or fingerprinting libraries.</li>
+          <li>No contact list, photo library, microphone, or camera access.</li>
+          <li>
+            No browsing history, no search queries, and no behavioural
+            profiling.
+          </li>
+        </ul>
+        <p>
+          Apple's standard system-level crash reporting (Settings → Privacy &amp;
+          Security → Analytics &amp; Improvements → Share With App Developers)
+          is controlled by you at the iOS level. If enabled, Apple — not us —
+          decides what symbolicated crash logs to forward to developers. You
+          can disable it at any time.
+        </p>
+
+        <h2 id="where">Where your data lives</h2>
+        <p>
+          Your records live in a SwiftData database inside the app's sandboxed
+          Application Support directory on your device, protected by iOS file
+          protection. Some non-sensitive caches (for example, an attestation
+          key reference) may live in the iOS Keychain on this device only.
+          Nothing is synchronised to iCloud unless you explicitly export a
+          file and place it in iCloud Drive yourself.
+        </p>
+        <p>
+          If you use Apple's iCloud Backup feature for your device, iOS may
+          include the app's data in your encrypted device backup. That backup
+          is governed by Apple's privacy policy, not ours. We do not see it
+          and cannot read it.
+        </p>
+
+        <h2 id="outbound">Outbound traffic</h2>
+        <p>
+          The app initiates only one category of network request on its own:
+          an RFC 3161 timestamp request to FreeTSA at
+          <code>https://freetsa.org/tsr</code>, periodically, to anchor your
+          record chain to real-world time. Each request contains:
+        </p>
+        <ul>
+          <li>
+            A 32-byte SHA-256 message imprint (the hash of your chain tail —
+            a value indistinguishable from random bytes to the receiver).
+          </li>
+          <li>An 8-byte cryptographic nonce.</li>
+          <li>The provider URL itself.</li>
+        </ul>
+        <p>
+          The submission is hash-only. It does <strong>never</strong> contain
+          your raw location, your dates, your jurisdiction names, your day
+          counts, your email, your name, your Apple ID, or any identifier
+          that could link the submission back to you.
+        </p>
+        <p>
+          Other categories of network activity may occur because of how iOS
+          and the App Store work — not because the app reaches out on its
+          own:
+        </p>
+        <ul>
+          <li>
+            <strong>Apple's App Store / StoreKit.</strong> Apple processes
+            subscription purchases, restores, and renewal updates per Apple's
+            privacy policy. We receive only a coarse entitlement state (do
+            you have an active subscription, yes or no), not your Apple ID,
+            your payment method, or your email.
+          </li>
+          <li>
+            <strong>Apple system services such as iCloud Keychain.</strong>
+            If you have iCloud Keychain enabled, iOS may sync small,
+            non-sensitive Keychain items between your devices using Apple's
+            end-to-end encryption. This is system behaviour controlled by
+            you, not by us.
+          </li>
+        </ul>
+
+        <h2 id="storekit">StoreKit and subscriptions</h2>
+        <p>
+          Subscriptions are processed by Apple through the App Store. We do
+          not operate a payment server and do not see your payment
+          information, your Apple ID, or your billing email. Apple gives the
+          app a privacy-preserving entitlement summary so the app knows
+          whether to unlock paid features. Cancel any time in
+          <em>Settings → [your name] → Subscriptions</em> on iOS. Apple's
+          privacy policy governs your relationship with Apple as the payment
+          processor.
+        </p>
+
+        <h2 id="access">Subject access and deletion</h2>
+        <p>
+          Because all your data lives on your device, you already have direct
+          access to it through the app's UI and exports. To delete:
+        </p>
+        <ul>
+          <li>
+            <strong>Delete All Data.</strong> Open the app and choose
+            <em>Settings → Delete All Data</em>. That wipes every record,
+            every preference, every cached file, and every export the app
+            created in its own container.
+          </li>
+          <li>
+            <strong>Uninstall the app.</strong> Removing the app from your
+            home screen tells iOS to delete the app's container, which takes
+            everything with it (subject to any iCloud Backup retention you
+            have configured).
+          </li>
+        </ul>
+        <p>
+          If you want a machine-readable dump of your records, the in-app
+          Export feature produces CSV, JSON, and PDF files in open formats
+          you can keep or send to anyone you choose.
+        </p>
+
+        <h2 id="children">Children</h2>
+        <p>
+          SnowbirdDays is rated 4+ in the App Store. The app is not directed
+          to children under 13 (United States — Children's Online Privacy
+          Protection Act) or to children under the equivalent age in your
+          jurisdiction, and we do not knowingly collect information from
+          children. If a parent or guardian believes a minor has used the
+          app and wants the data removed, the in-app
+          <em>Delete All Data</em> function wipes the device-local data;
+          because we have no servers, there is no further deletion to
+          perform.
+        </p>
+
+        <h2 id="changes">Changes to this policy</h2>
+        <p>
+          If we change this policy, we will update the effective date at the
+          top of this page. For material changes — for example, a new
+          outbound destination, or a new category of data collection — we
+          will also surface a notice in the app on the next launch after the
+          change.
+        </p>
+
+        <h2 id="contact">Contact</h2>
+        <p>
+          Questions about this policy or about the data we (do not) hold:
+          <a href="mailto:privacy@snowbirddays.app">privacy@snowbirddays.app</a>.
+        </p>
+
+        <h2 id="governing-law">Governing law</h2>
+        <p>
+          This policy is governed by the laws of the United States and the
+          State of <em>Minnesota</em>, without regard to conflict-of-law
+          principles. For users whose local consumer-protection or privacy
+          law confers rights that cannot be waived by contract, those rights
+          prevail to the minimum extent required.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer-inner">
+        <div>
+          <p class="site-footer-brand">Snowbird<em>Days</em></p>
+          <p>&copy; 2026 SnowbirdDays.</p>
+          <p class="site-footer-disclaimer">Not tax or legal advice. Always consult a qualified CPA, tax attorney, or audit professional.</p>
+        </div>
+        <nav aria-label="Footer">
+          <a href="/">Home</a>
+          <a href="terms.html">Terms</a>
+          <a href="support.html">Support</a>
+          <a href="audit-evidence.html">Audit Evidence</a>
+          <a href="mailto:privacy@snowbirddays.app">privacy@snowbirddays.app</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
