@@ -196,63 +196,100 @@ func verifyCanonicalPayloadDuplicates(
         throw failv("canonicalPayload bytes are not valid JSON at sequence \(seq)")
     }
 
+    // Fail closed on missing fields — parity with the in-process
+    // `AuditEvidenceVerifier.verifyCanonicalPayloadFields` strict
+    // contract (LEARNINGS 2026-05-02 audit-evidence partial-window
+    // tightening). The previous `if let` shape silently skipped each
+    // check when the canonical payload omitted a field, so a tampered
+    // artifact whose bytes happened to hash to the stored value but
+    // stripped a required field would pass field verification here
+    // while the app's verifier rejected it. Production
+    // `AttestationCanonicalPayload` always emits these fields; absence
+    // is structural evidence of tampering or producer drift and must
+    // be rejected.
+
     // sequenceNumber
-    if let canSeq = (parsed["sequenceNumber"] as? NSNumber)?.int64Value, canSeq != seq {
+    guard let canSeq = (parsed["sequenceNumber"] as? NSNumber)?.int64Value else {
+        throw failv("canonicalPayload missing field sequenceNumber at sequence \(seq)")
+    }
+    if canSeq != seq {
         throw failv("canonicalPayload sequenceNumber mismatch at sequence \(seq)")
     }
     // dateKey
-    if let canDate = parsed["dateKey"] as? String,
-       canDate != (row["dateKey"] as? String ?? "") {
+    guard let canDate = parsed["dateKey"] as? String else {
+        throw failv("canonicalPayload missing field dateKey at sequence \(seq)")
+    }
+    if canDate != (row["dateKey"] as? String ?? "") {
         throw failv("canonicalPayload dateKey mismatch at sequence \(seq)")
     }
     // jurisdiction
-    if let canJur = parsed["jurisdiction"] as? String,
-       canJur != (row["jurisdiction"] as? String ?? "") {
+    guard let canJur = parsed["jurisdiction"] as? String else {
+        throw failv("canonicalPayload missing field jurisdiction at sequence \(seq)")
+    }
+    if canJur != (row["jurisdiction"] as? String ?? "") {
         throw failv("canonicalPayload jurisdiction mismatch at sequence \(seq)")
     }
-    // serializerVersion / version
+    // serializerVersion / version (canonical emits both, value is the same;
+    // both must be absent to fail).
     let canonicalSer = (parsed["serializerVersion"] as? NSNumber)?.intValue
         ?? (parsed["version"] as? NSNumber)?.intValue
-    if let cs = canonicalSer, cs != (row["serializerVersion"] as? Int ?? -1) {
+    guard let cs = canonicalSer else {
+        throw failv("canonicalPayload missing field serializerVersion at sequence \(seq)")
+    }
+    if cs != (row["serializerVersion"] as? Int ?? -1) {
         throw failv("canonicalPayload serializerVersion mismatch at sequence \(seq)")
     }
     // previousHash
-    if let canPrev = parsed["previousHash"] as? String,
-       canPrev.lowercased() != storedPrevHashHex.lowercased() {
+    guard let canPrev = parsed["previousHash"] as? String else {
+        throw failv("canonicalPayload missing field previousHash at sequence \(seq)")
+    }
+    if canPrev.lowercased() != storedPrevHashHex.lowercased() {
         throw failv("canonicalPayload previousHash mismatch at sequence \(seq)")
     }
-    // supersedesSequence
-    if let canSup = parsed["supersedesSequence"] {
-        let storedSup = (row["supersedesSequence"] as? NSNumber)?.int64Value
-        if canSup is NSNull {
-            if storedSup != nil {
-                throw failv("canonicalPayload supersedesSequence mismatch at sequence \(seq)")
-            }
-        } else if let canSupNum = (canSup as? NSNumber)?.int64Value {
-            if canSupNum != storedSup {
-                throw failv("canonicalPayload supersedesSequence mismatch at sequence \(seq)")
-            }
-        }
+    // supersedesSequence — canonical emits this every row as either
+    // NSNull (no superseded predecessor) or an Int64. Absence is a
+    // structural drift; treat as missing-field rather than implicit
+    // "not superseded".
+    guard let canSup = parsed["supersedesSequence"] else {
+        throw failv("canonicalPayload missing field supersedesSequence at sequence \(seq)")
     }
-    // reattestReason
-    if let canReat = parsed["reattestReason"] {
-        let storedReat = row["reattestReason"] as? String
-        if canReat is NSNull {
-            if storedReat != nil {
-                throw failv("canonicalPayload reattestReason mismatch at sequence \(seq)")
-            }
-        } else if let canReatStr = canReat as? String {
-            if canReatStr != storedReat {
-                throw failv("canonicalPayload reattestReason mismatch at sequence \(seq)")
-            }
+    let storedSup = (row["supersedesSequence"] as? NSNumber)?.int64Value
+    if canSup is NSNull {
+        if storedSup != nil {
+            throw failv("canonicalPayload supersedesSequence mismatch at sequence \(seq)")
         }
+    } else if let canSupNum = (canSup as? NSNumber)?.int64Value {
+        if canSupNum != storedSup {
+            throw failv("canonicalPayload supersedesSequence mismatch at sequence \(seq)")
+        }
+    } else {
+        // Present but neither NSNull nor a number — sanitized mismatch.
+        throw failv("canonicalPayload supersedesSequence mismatch at sequence \(seq)")
     }
-    // rawEventSequenceNumbers
-    if let canSeqs = (parsed["rawEventSequenceNumbers"] as? [NSNumber])?.map({ $0.int64Value }) {
-        let storedSeqs = ((row["rawEventSequenceNumbers"] as? [NSNumber])?.map { $0.int64Value }) ?? []
-        if canSeqs.sorted() != storedSeqs.sorted() {
-            throw failv("canonicalPayload rawEventSequenceNumbers mismatch at sequence \(seq)")
+    // reattestReason — same NSNull-or-String contract as supersedes.
+    guard let canReat = parsed["reattestReason"] else {
+        throw failv("canonicalPayload missing field reattestReason at sequence \(seq)")
+    }
+    let storedReat = row["reattestReason"] as? String
+    if canReat is NSNull {
+        if storedReat != nil {
+            throw failv("canonicalPayload reattestReason mismatch at sequence \(seq)")
         }
+    } else if let canReatStr = canReat as? String {
+        if canReatStr != storedReat {
+            throw failv("canonicalPayload reattestReason mismatch at sequence \(seq)")
+        }
+    } else {
+        throw failv("canonicalPayload reattestReason mismatch at sequence \(seq)")
+    }
+    // rawEventSequenceNumbers (canonical emits sorted [Int64])
+    guard let canSeqsRaw = parsed["rawEventSequenceNumbers"] as? [NSNumber] else {
+        throw failv("canonicalPayload missing field rawEventSequenceNumbers at sequence \(seq)")
+    }
+    let canSeqs = canSeqsRaw.map { $0.int64Value }
+    let storedSeqs = ((row["rawEventSequenceNumbers"] as? [NSNumber])?.map { $0.int64Value }) ?? []
+    if canSeqs.sorted() != storedSeqs.sorted() {
+        throw failv("canonicalPayload rawEventSequenceNumbers mismatch at sequence \(seq)")
     }
 }
 
@@ -359,12 +396,15 @@ func verifyEventChainProof(proofs: [[String: Any]]) throws {
 /// Extracted so the same bytes back both `--self-test` and
 /// `--write-fixtures <dir>`.
 func buildSelfTestFixtures() throws -> (good: Data, tampered: Data) {
-    // Synthesize a single canonical payload (the bytes do not need to
-    // match production CanonicalJSON output exactly for the self-test;
-    // the verifier only checks that SHA256(canonicalPayloadHex) ==
-    // canonicalPayloadHashHex and that interior fields agree). Using a
-    // valid JSON object ensures the duplicate-column check runs.
-    let payloadBytes = Data(#"{"dateKey":"2026-04-30","jurisdiction":"US-FL","previousHash":"0000000000000000000000000000000000000000000000000000000000000000","sequenceNumber":1,"serializerVersion":1,"version":1}"#.utf8)
+    // Synthesize a single canonical payload. The verifier requires the
+    // 8 strict canonical fields per the post-L15 in-process contract;
+    // production `AttestationCanonicalPayload` always emits them.
+    // Sorted-key JSON order with `supersedesSequence: null` and
+    // `reattestReason: null` matches the encoder's NSNull-on-nil
+    // contract. `rawEventSequenceNumbers` mirrors the duplicate column
+    // on the surrounding attestation row so the strict-field check
+    // passes.
+    let payloadBytes = Data(#"{"dateKey":"2026-04-30","jurisdiction":"US-FL","previousHash":"0000000000000000000000000000000000000000000000000000000000000000","rawEventSequenceNumbers":[10],"reattestReason":null,"sequenceNumber":1,"serializerVersion":1,"supersedesSequence":null,"version":1}"#.utf8)
     let payloadHashBytes = Data(SHA256.hash(data: payloadBytes))
     let payloadHashHex = hexLowercase(payloadHashBytes)
 
@@ -466,6 +506,65 @@ func selfTest() throws {
     // `1, 3` even when each row's canonical payload hash is
     // internally self-consistent.
     try selfTestRejectsDailyGap()
+
+    // Negative proof for strict missing-field rejection. The verifier
+    // must reject an artifact whose canonical payload omits a required
+    // field, mirroring the post-L15 in-process strict contract.
+    try selfTestRejectsMissingCanonicalField()
+}
+
+/// Build an artifact whose canonical payload omits `supersedesSequence`
+/// and assert the strict-field check rejects it. Mirrors the in-process
+/// `AuditEvidenceVerifier.verifyCanonicalPayloadFields` strict contract
+/// so a published artifact missing a required field fails closed in
+/// both verifiers.
+func selfTestRejectsMissingCanonicalField() throws {
+    // Canonical payload that intentionally omits `supersedesSequence`
+    // (a strict-required field). All other 7 strict fields are present
+    // and the SHA-256 of these bytes equals `canonicalPayloadHashHex`,
+    // so the byte-integrity check passes — only the strict-field check
+    // should reject.
+    let json = "{\"dateKey\":\"2026-04-30\",\"jurisdiction\":\"US-FL\",\"previousHash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"rawEventSequenceNumbers\":[],\"reattestReason\":null,\"sequenceNumber\":1,\"serializerVersion\":1,\"version\":1}"
+    let payload = Data(json.utf8)
+    let hash = Data(SHA256.hash(data: payload))
+    let row: [String: Any] = [
+        "sequenceNumber": NSNumber(value: Int64(1)),
+        "dateKey": "2026-04-30",
+        "jurisdiction": "US-FL",
+        "serializerVersion": 1,
+        "schemaVersion": 3,
+        "previousHashHex": hexLowercase(Data(count: 32)),
+        "canonicalPayloadHashHex": hexLowercase(hash),
+        "canonicalPayloadHex": hexLowercase(payload),
+        "anchorStatus": "none",
+        "rawEventSequenceNumbers": [NSNumber](),
+    ]
+    let artifact: [String: Any] = [
+        "artifactType": "snowbirddays.auditEvidence",
+        "formatVersion": 1,
+        "generatedAt": "2026-05-02T00:00:00.000Z",
+        "disclaimer": "self-test fixture; do not redistribute",
+        "limitations": ["self-test fixture"],
+        "metadata": [
+            "schemaVersion": 3,
+            "dailyAttestationCount": 1,
+            "ledgerBreakEventCount": 0,
+            "anchorReceiptCount": 0,
+            "eventChainProofCount": 0,
+        ],
+        "dailyAttestations": [row],
+        "ledgerBreakEvents": [],
+        "anchorReceipts": [],
+        "eventChainProof": [],
+    ]
+    let bytes = try JSONSerialization.data(withJSONObject: artifact, options: [.sortedKeys, .prettyPrinted])
+    do {
+        try verify(jsonData: bytes)
+        FileHandle.standardError.write(Data("self-test FAILED: missing-canonical-field fixture was not rejected\n".utf8))
+        exit(1)
+    } catch let err as VerifyError {
+        FileHandle.standardOutput.write(Data("self-test: missing-canonical-field fixture rejected (\(err.message))\n".utf8))
+    }
 }
 
 /// Build a `1, 3` gap artifact whose two attestations are individually
@@ -473,7 +572,10 @@ func selfTest() throws {
 /// and assert the verifier rejects it.
 func selfTestRejectsDailyGap() throws {
     func attestationRow(seq: Int64, prevHashHex: String) -> [String: Any] {
-        let json = "{\"dateKey\":\"2026-04-30\",\"jurisdiction\":\"US-FL\",\"previousHash\":\"\(prevHashHex)\",\"rawEventSequenceNumbers\":[],\"sequenceNumber\":\(seq),\"serializerVersion\":1,\"version\":1}"
+        // Sorted-key JSON with all 8 strict canonical fields (parity
+        // with `AttestationCanonicalPayload` emission). Both
+        // `supersedesSequence` and `reattestReason` are NSNull.
+        let json = "{\"dateKey\":\"2026-04-30\",\"jurisdiction\":\"US-FL\",\"previousHash\":\"\(prevHashHex)\",\"rawEventSequenceNumbers\":[],\"reattestReason\":null,\"sequenceNumber\":\(seq),\"serializerVersion\":1,\"supersedesSequence\":null,\"version\":1}"
         let payload = Data(json.utf8)
         let hash = Data(SHA256.hash(data: payload))
         return [
