@@ -1,6 +1,6 @@
 #!/usr/bin/env swift
 //
-// SnowbirdDays — offline audit-evidence verifier (Phase 4.5 P4.5-6A)
+// SnowbirdDays — offline audit-evidence verifier
 //
 // Standalone Swift script with no SnowbirdDays target imports. Parses a
 // `snowbirddays.auditEvidence` artifact and runs the integrity checks
@@ -154,10 +154,10 @@ func verifyDailyChain(attestations: [[String: Any]]) throws {
             throw failv("canonicalPayloadHashHex != SHA256(canonicalPayloadHex) at sequence \(seq)")
         }
 
-        // Full-store contract (LEARNINGS 2026-05-02): the artifact
-        // carries every `DailyAttestation` row, so every gap or
-        // non-1 starting sequence is a hard fail rather than a
-        // partial-window tolerance.
+        // Full-store contract: the artifact carries every
+        // `DailyAttestation` row, so every gap or non-1 starting
+        // sequence is a hard fail rather than a partial-window
+        // tolerance.
         if let prev = prevSeq {
             if seq <= prev {
                 throw failv("daily chain sequence \(seq) is out of order or duplicated")
@@ -288,10 +288,10 @@ func verifyReceipts(receipts: [[String: Any]], attestations: [[String: Any]]) th
             throw failv("messageImprintHashHex does not match recomputed AnchorManifest digest for receipt \(id)")
         }
 
-        // Full-store contract (LEARNINGS 2026-05-02): every receipt
-        // must have its covered-end attestation present in the
-        // artifact. A missing covered-end is structural evidence the
-        // artifact has been truncated or tampered with.
+        // Full-store contract: every receipt must have its
+        // covered-end attestation present in the artifact. A missing
+        // covered-end is structural evidence the artifact has been
+        // truncated or tampered with.
         guard let endRow = attestationBySeq[coveredEnd] else {
             throw failv("receipt \(id) coversSequenceEnd=\(coveredEnd) but the matching attestation is missing from the artifact")
         }
@@ -339,7 +339,7 @@ func verifyEventChainProof(proofs: [[String: Any]]) throws {
         // most recent prior sealed event regardless of numeric gap.
         // Mirror that contract: every proof row after the first
         // chains to the PREVIOUS EXPORTED proof row, not the
-        // numerically-adjacent neighbor (LEARNINGS 2026-05-02).
+        // numerically-adjacent neighbor.
         if let prev = prevSeq {
             if seq <= prev {
                 throw failv("eventChainProof sequence \(seq) is out of order or duplicated")
@@ -462,9 +462,9 @@ func selfTest() throws {
         FileHandle.standardOutput.write(Data("self-test: tampered fixture rejected (\(err.message))\n".utf8))
     }
 
-    // Negative proof for daily-chain gap (LEARNINGS 2026-05-02). The
-    // verifier must reject `1, 3` even when each row's canonical payload
-    // hash is internally self-consistent.
+    // Negative proof for daily-chain gap. The verifier must reject
+    // `1, 3` even when each row's canonical payload hash is
+    // internally self-consistent.
     try selfTestRejectsDailyGap()
 }
 
