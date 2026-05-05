@@ -63,9 +63,11 @@
         <p>
           No. Your location history stays on this device. The only outbound
           request the app makes on its own is a periodic hash submission to a
-          public RFC 3161 timestamp authority (FreeTSA). The submission contains
-          a 32-byte SHA-256 hash and an 8-byte nonce. It contains no location,
-          no name, no email, and nothing that identifies you. See the
+          public RFC 3161 timestamp authority (FreeTSA). The request body
+          contains a 32-byte SHA-256 hash and an 8-byte nonce. It contains no
+          location, no name, no email, and no app account identifier. FreeTSA
+          and network operators may receive ordinary transport metadata such
+          as IP address and request time. See the
           <a href="privacy.html">Privacy Policy</a> for the full disclosure.
         </p>
 
@@ -95,8 +97,8 @@
           Your existing data stays on your device, and you can still read your
           history, import data, and export it. New automatic recording, new
           manual entries, and threshold alerts pause until you resubscribe.
-          There is a short grace banner in the app so a missed renewal does not
-          immediately disrupt the flow.
+          There is a 7-day grace banner in the app so a missed renewal does
+          not immediately disrupt the flow.
         </p>
 
         <h3>How do I cancel my subscription?</h3>
@@ -119,9 +121,9 @@
           preparer or auditor can verify offline. The
           <a href="audit-evidence.html">Audit Evidence page</a> describes the
           file's contents, what its cryptographic chain proves and does not
-          prove, and how to run the standalone offline verifier shipped at
-          <code>scripts/verify-audit-evidence.swift</code> in the public
-          repository. For a guided walkthrough, email
+          prove, and how to run the standalone offline verifier published as
+          <code>verify-audit-evidence.swift</code> on this site. For a guided
+          walkthrough, email
           <a href="mailto:audit@snowbirddays.app">audit@snowbirddays.app</a>.
         </p>
       </article>

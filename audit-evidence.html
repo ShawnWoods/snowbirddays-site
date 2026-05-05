@@ -240,9 +240,11 @@
             Swift script —
             <a href="verify-audit-evidence.swift">verify-audit-evidence.swift</a>
             — that is deliberately written as a separate implementation from
-            the app, with no SnowbirdDays imports, so a regression on either
-            side fails closed: the app and the third-party verifier must
-            independently agree on what a valid artifact looks like.
+            the app, with no SnowbirdDays imports. It verifies the artifact
+            shape, daily hash chain, anchor-manifest binding, receipt coverage,
+            and event-chain proof. It does not validate the RFC&nbsp;3161
+            token signature or certificate chain; verify those separately in
+            the next step with standard RFC&nbsp;3161 tooling.
             <br /><br />
             <strong>Requirements.</strong>
             macOS with the Swift toolchain installed. Either install
@@ -278,6 +280,11 @@
             fully offline; it makes no network calls. The file is served as
             plain text from the same domain as this page so an auditor can
             read every line before running it.
+            The standalone script verifies artifact structure, canonical
+            hash-chain continuity, receipt coverage, and anchor-to-manifest
+            binding. It does not validate the RFC 3161 token signature or
+            certificate chain; verify those tokens separately in the next
+            step.
             <br /><br />
             <strong>Faster repeated runs (optional).</strong>
             Compile once and execute the binary thereafter:
@@ -287,7 +294,7 @@
             <code>./verify-audit-evidence &lt;path-to-artifact.json&gt;</code>
           </li>
           <li>
-            Inspect anchor receipts. Each receipt contains the binary RFC 3161
+            Verify anchor receipts. Each receipt contains the binary RFC 3161
             token signed by the timestamp authority, base64-encoded under
             <code>tokenDataBase64</code>. Verifying the token against
             FreeTSA's published certificate (<a href="https://freetsa.org/">freetsa.org</a>)

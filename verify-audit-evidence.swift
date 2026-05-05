@@ -336,6 +336,20 @@ func verifyReceipts(receipts: [[String: Any]], attestations: [[String: Any]]) th
         if dailyTailHex != endHashHex {
             throw failv("dailyTailComponentHex does not equal coveredSequenceEnd attestation hash for receipt \(id)")
         }
+
+        let status = (r["status"] as? String) ?? ""
+        if status == "verified" {
+            guard let tokenBase64 = r["tokenDataBase64"] as? String,
+                  let tokenData = Data(base64Encoded: tokenBase64),
+                  !tokenData.isEmpty else {
+                throw failv("verified receipt \(id) is missing tokenDataBase64")
+            }
+            guard let nonceHex = r["nonceHex"] as? String,
+                  let nonceData = dataFromHex(nonceHex),
+                  nonceData.count == 8 else {
+                throw failv("verified receipt \(id) is missing a valid 8-byte nonceHex")
+            }
+        }
     }
     for a in attestations {
         let seq = (a["sequenceNumber"] as? NSNumber)?.int64Value ?? -1
@@ -344,6 +358,10 @@ func verifyReceipts(receipts: [[String: Any]], attestations: [[String: Any]]) th
         guard status == "anchored", let rid = receiptId else { continue }
         guard let receipt = receiptsById[rid] else {
             throw failv("attestation \(seq) is anchored but receipt \(rid) is missing")
+        }
+        let receiptStatus = (receipt["status"] as? String) ?? ""
+        guard receiptStatus == "verified" else {
+            throw failv("attestation \(seq) is anchored but receipt \(rid) is not verified (status=\(receiptStatus))")
         }
         let coveredStart = (receipt["coveredSequenceStart"] as? NSNumber)?.int64Value ?? 0
         let coveredEnd = (receipt["coveredSequenceEnd"] as? NSNumber)?.int64Value ?? 0
@@ -446,6 +464,8 @@ func buildSelfTestFixtures() throws -> (good: Data, tampered: Data) {
         "submittedAt": "2026-05-01T00:00:00.000Z",
         "verifiedAt": NSNull(),
         "tsaTime": "2026-05-01T00:00:01.000Z",
+        "nonceHex": "aaaaaaaaaaaaaaaa",
+        "tokenDataBase64": "MAA=",
     ]
     let proof: [String: Any] = [
         "sequenceNumber": NSNumber(value: Int64(10)),

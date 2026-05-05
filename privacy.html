@@ -84,8 +84,10 @@
             <strong>The only outbound traffic the app initiates on its own is
             a hash submission to a public timestamp authority (FreeTSA).</strong>
             That submission contains a 32-byte SHA-256 hash and an 8-byte
-            nonce. It contains no location, no name, no email, and nothing
-            that identifies you.
+            nonce. The request body contains no location, no name, no email,
+            and no app account identifier. FreeTSA and network operators may
+            receive ordinary transport metadata such as IP address and request
+            time.
           </li>
         </ul>
 
@@ -206,6 +208,11 @@
           privacy policy governs your relationship with Apple as the payment
           processor.
         </p>
+        <p>
+          If Apple Family Sharing is enabled for your subscription, Apple
+          handles family eligibility and membership. We do not receive your
+          family-member list or manage family access.
+        </p>
 
         <h2 id="access">Subject access and deletion</h2>
         <p>
@@ -228,8 +235,10 @@
         </ul>
         <p>
           If you want a machine-readable dump of your records, the in-app
-          Export feature produces CSV, JSON, and PDF files in open formats
-          you can keep or send to anyone you choose.
+          Export feature produces CSV, JSON, Audit Evidence JSON, and
+          plain-text summary files in open formats you can keep or send to
+          anyone you choose. Backup and visit-event exports may contain
+          precise coordinates and timestamps.
         </p>
 
         <h2 id="children">Children</h2>
